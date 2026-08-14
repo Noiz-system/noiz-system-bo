@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "supports",
+  "info": {
+    "singularName": "support",
+    "pluralName": "supports",
+    "displayName": "Support",
+    "description": "Support tickets submitted by users from the BD Market, BD Partner and Noiz Logistics apps."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["bdmarket", "bdpartner", "noiz_logistics"],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["opened", "assigned", "closed"],
+      "default": "opened",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "firstname": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "subject": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "message": {
+      "type": "text",
+      "required": true,
+      "maxLength": 5000
+    }
+  }
+}
