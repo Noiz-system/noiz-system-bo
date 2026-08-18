@@ -1,0 +1,34 @@
+# Ne jamais copier les secrets ni les artefacts locaux dans le contexte de build.
+.env
+.env.*
+!.env.example
+
+node_modules
+dist
+build
+.tmp
+.strapi
+.strapi-updater.json
+.strapi-cloud.json
+types/generated
+
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+
+*.log
+coverage
+exports
+license.txt
+
+Dockerfile
+.dockerignore
+docker-compose*.yml
+README.md
+
+# Les médias téléversés vivent dans un volume, pas dans l'image.
+public/uploads/*
+!public/uploads/.gitkeep

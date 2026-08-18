@@ -1,0 +1,60 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# noiz-system-bo — exemple de déploiement
+#
+#   cp docker-compose.example.yml docker-compose.yml
+#   cp .env.example .env      # puis renseigner les valeurs
+#   docker compose up -d --build
+#
+# Aucun port n'est publié sur l'hôte : le conteneur n'est joignable que depuis
+# le réseau `web`, sous le nom `noiz-system-bo` sur le port 1337. C'est au
+# reverse proxy (Traefik, Caddy, nginx…) attaché à ce même réseau d'exposer le
+# service en HTTPS. Pour un accès temporaire sans proxy :
+#   docker compose exec noiz-system-bo node -e "fetch('http://127.0.0.1:1337/_health').then(r=>console.log(r.status))"
+#
+# La base de données n'est PAS dans ce fichier : en production elle est fournie
+# par Neon, et en local par le Postgres de la machine hôte.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  noiz-system-bo:
+    build:
+      context: .
+    image: noiz-system-bo:latest
+    container_name: noiz-system-bo
+    restart: unless-stopped
+
+    # Toute la configuration vit dans .env (voir .env.example).
+    env_file:
+      - .env
+
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 1337
+
+    # Les médias téléversés doivent survivre à la reconstruction de l'image.
+    volumes:
+      - uploads:/app/public/uploads
+
+    networks:
+      - web
+
+    # Nécessaire uniquement pour joindre un Postgres tournant sur l'hôte
+    # (développement). Avec Neon, cette ligne peut être retirée.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  uploads:
+
+networks:
+  # Réseau partagé avec le reverse proxy, créé hors de ce fichier :
+  #   docker network create web
+  web:
+    external: true
